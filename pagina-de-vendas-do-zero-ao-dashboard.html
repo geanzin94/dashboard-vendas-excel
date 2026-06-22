@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do Zero ao Dashboard — Gean C. G. de Moraes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:   #0A0A0A;
+  --amber:   #F5C518;
+  --amber-d: #C49A10;
+  --amber-l: #FEF6CC;
+  --cream:   #F9F6F0;
+  --night:   #1A1A2E;
+  --night-l: #252540;
+  --white:   #FFFFFF;
+  --gray:    #888888;
+  --gray-l:  #DDDDDD;
+  --ink:     #1A1A1A;
+  --danger:  #E53E3E;
+  --green:   #1A6B3A;
+  --radius:  12px;
+  --radius-lg: 20px;
+  --shadow:  0 4px 24px rgba(0,0,0,.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; line-height: 1.2; }
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; text-decoration: none; }
+
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Layout ── */
+.container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+.container--wide { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+section { padding: 80px 0; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 18px 36px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s, background .15s;
+  text-align: center;
+}
+.btn--primary {
+  background: var(--amber);
+  color: var(--black);
+  box-shadow: 0 4px 20px rgba(245,197,24,.4);
+}
+.btn--primary:hover {
+  background: var(--amber-d);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(245,197,24,.5);
+}
+.btn--primary:active { transform: translateY(0); }
+.btn--lg { font-size: 1.2rem; padding: 22px 48px; border-radius: 14px; width: 100%; max-width: 480px; }
+
+/* ── Eyebrow ── */
+.eyebrow {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.eyebrow--amber { background: var(--amber-l); color: #7a5e00; }
+.eyebrow--white { background: rgba(255,255,255,.12); color: rgba(255,255,255,.8); }
+.eyebrow--night { background: var(--night-l); color: var(--amber); }
+
+/* ── Section titles ── */
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.15;
+}
+.section-sub {
+  font-size: 1.05rem;
+  color: #555;
+  max-width: 600px;
+  margin-bottom: 48px;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+#hero {
+  background: var(--black);
+  padding: 100px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle grid texture */
+#hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(245,197,24,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,197,24,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--amber);
+}
+
+.hero-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.hero-title span { color: var(--amber); }
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: rgba(255,255,255,.7);
+  max-width: 560px;
+  margin: 20px 0 48px;
+  line-height: 1.65;
+}
+
+/* Counter block */
+.counter-block {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  background: rgba(245,197,24,.08);
+  border: 1px solid rgba(245,197,24,.2);
+  border-radius: var(--radius);
+  padding: 20px 28px;
+  margin-bottom: 48px;
+}
+.counter-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 700;
+  color: var(--amber);
+  line-height: 1;
+  min-width: 3ch;
+  text-align: right;
+}
+.counter-label {
+  font-size: .95rem;
+  color: rgba(255,255,255,.6);
+  max-width: 160px;
+  line-height: 1.35;
+}
+.counter-label strong {
+  display: block;
+  color: rgba(255,255,255,.9);
+  font-size: 1.05rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.hero-cta-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+.hero-guarantee {
+  font-size: .85rem;
+  color: rgba(255,255,255,.45);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero-guarantee svg { opacity: .6; }
+
+/* ══════════════════════════════════════════
+   DOR
+══════════════════════════════════════════ */
+#dor {
+  background: var(--night);
+  padding: 72px 0;
+}
+.dor-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 40px;
+  line-height: 1.3;
+}
+.dor-list { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+.dor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+}
+.dor-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: rgba(229,62,62,.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.dor-text { color: rgba(255,255,255,.8); font-size: 1rem; line-height: 1.6; }
+.dor-text strong { color: var(--white); font-weight: 500; }
+
+.dor-bridge {
+  margin-top: 48px;
+  padding: 28px 32px;
+  background: rgba(245,197,24,.08);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.dor-bridge p { color: rgba(255,255,255,.85); font-size: 1.05rem; line-height: 1.65; }
+.dor-bridge strong { color: var(--amber); font-weight: 600; }
+
+/* ══════════════════════════════════════════
+   APRENDA
+══════════════════════════════════════════ */
+#aprenda { background: var(--cream); }
+.learn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+.learn-card {
+  background: var(--white);
+  border: 1px solid #e8e4da;
+  border-radius: var(--radius);
+  padding: 24px 26px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: box-shadow .2s, transform .2s;
+}
+.learn-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,.08);
+  transform: translateY(-2px);
+}
+.learn-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--amber-d);
+  background: var(--amber-l);
+  padding: 3px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.learn-text h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.learn-text p { font-size: .9rem; color: #666; line-height: 1.55; }
+
+/* ══════════════════════════════════════════
+   PACOTE
+══════════════════════════════════════════ */
+#pacote { background: var(--white); }
+.pacote-grid { display: flex; flex-direction: column; gap: 14px; }
+.pacote-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--cream);
+  border: 1px solid #e8e4da;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  transition: border-color .2s;
+}
+.pacote-item:hover { border-color: var(--amber); }
+.pacote-item--main {
+  background: var(--night);
+  border-color: var(--night);
+}
+.pacote-left { display: flex; align-items: center; gap: 16px; }
+.pacote-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.3rem;
+}
+.pacote-icon--main { background: var(--amber); }
+.pacote-icon--bonus { background: rgba(245,197,24,.12); }
+.pacote-info h4 { font-size: 1rem; font-weight: 600; margin-bottom: 3px; }
+.pacote-info p { font-size: .85rem; color: #666; }
+.pacote-item--main .pacote-info h4 { color: var(--white); }
+.pacote-item--main .pacote-info p { color: rgba(255,255,255,.55); }
+.pacote-badge {
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.pacote-badge--valor { background: var(--amber-l); color: #7a5e00; }
+.pacote-badge--bonus { background: rgba(26,107,58,.1); color: var(--green); }
+.pacote-badge--main { background: var(--amber); color: var(--black); }
+
+.pacote-total {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, var(--night), var(--night-l));
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pacote-total-label { color: rgba(255,255,255,.7); font-size: .9rem; }
+.pacote-total-label strong { display: block; color: var(--white); font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin-top: 2px; }
+.pacote-total-price {
+  text-align: right;
+}
+.pacote-total-price .de {
+  font-size: .85rem;
+  color: rgba(255,255,255,.4);
+  text-decoration: line-through;
+  font-family: 'JetBrains Mono', monospace;
+}
+.pacote-total-price .por {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+/* ══════════════════════════════════════════
+   AUTOR
+══════════════════════════════════════════ */
+#autor { background: var(--cream); }
+.autor-card {
+  background: var(--white);
+  border: 1px solid #e8e4da;
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.autor-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--night);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--amber);
+  border: 3px solid var(--amber);
+}
+.autor-body {}
+.autor-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.autor-role {
+  font-size: .85rem;
+  color: var(--gray);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 20px;
+}
+.autor-bio {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.7;
+  max-width: 540px;
+}
+.autor-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.autor-stat-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.autor-stat-label {
+  font-size: .8rem;
+  color: var(--gray);
+  line-height: 1.3;
+}
+
+/* ══════════════════════════════════════════
+   GARANTIA
+══════════════════════════════════════════ */
+#garantia { background: var(--night); padding: 72px 0; }
+.garantia-inner {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.garantia-badge {
+  flex-shrink: 0;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: rgba(245,197,24,.1);
+  border: 2px dashed var(--amber);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+}
+.garantia-days {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--amber);
+  line-height: 1;
+}
+.garantia-dias-label {
+  font-size: .75rem;
+  color: var(--amber);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+}
+.garantia-text h3 {
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.garantia-text p { color: rgba(255,255,255,.7); max-width: 520px; line-height: 1.65; }
+
+/* ══════════════════════════════════════════
+   PREÇO
+══════════════════════════════════════════ */
+#preco { background: var(--cream); }
+.preco-card {
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 2px solid var(--amber);
+  border-radius: var(--radius-lg);
+  padding: 40px 40px 48px;
+  text-align: center;
+  box-shadow: 0 12px 48px rgba(245,197,24,.15);
+}
+.preco-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--amber-d);
+  background: var(--amber-l);
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+.preco-de {
+  font-size: 1rem;
+  color: var(--gray);
+  text-decoration: line-through;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 4px;
+}
+.preco-por {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(3.5rem, 10vw, 5rem);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.preco-por span { font-size: 1.8rem; vertical-align: top; margin-top: .5rem; display: inline-block; }
+.preco-parcelas {
+  font-size: .9rem;
+  color: var(--gray);
+  margin-bottom: 32px;
+}
+.preco-includes {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.preco-includes li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .95rem;
+  color: #444;
+}
+.preco-includes .check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.preco-includes .check svg { width: 11px; height: 11px; }
+.preco-card .btn--lg { margin: 0 auto; display: flex; }
+.preco-note {
+  margin-top: 14px;
+  font-size: .8rem;
+  color: var(--gray);
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════
+   FAQ
+══════════════════════════════════════════ */
+#faq { background: var(--white); }
+.faq-list { display: flex; flex-direction: column; gap: 2px; }
+.faq-item {}
+.faq-item input[type="checkbox"] { display: none; }
+.faq-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--cream);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+  transition: background .15s;
+  user-select: none;
+}
+.faq-label:hover { background: #f0ece3; }
+.faq-arrow {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--amber-l);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform .25s;
+}
+.faq-item input:checked ~ .faq-label .faq-arrow { transform: rotate(180deg); }
+.faq-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s ease, padding .25s;
+  background: var(--cream);
+  border-radius: 0 0 var(--radius) var(--radius);
+  font-size: .95rem;
+  color: #555;
+  line-height: 1.7;
+  padding: 0 24px;
+}
+.faq-item input:checked ~ .faq-body {
+  max-height: 400px;
+  padding: 0 24px 20px;
+}
+
+/* ══════════════════════════════════════════
+   CTA FINAL
+══════════════════════════════════════════ */
+#cta-final {
+  background: var(--black);
+  padding: 100px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+#cta-final::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(245,197,24,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,197,24,.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.cta-final-title {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.cta-final-title span { color: var(--amber); }
+.cta-final-sub {
+  font-size: 1rem;
+  color: rgba(255,255,255,.55);
+  max-width: 480px;
+  margin: 0 auto 40px;
+}
+.cta-final .btn--lg { margin: 0 auto; }
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+footer {
+  background: var(--black);
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 32px 0;
+  text-align: center;
+  font-size: .82rem;
+  color: rgba(255,255,255,.3);
+}
+footer a { color: rgba(255,255,255,.4); }
+footer a:hover { color: var(--amber); }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 600px) {
+  section { padding: 60px 0; }
+  .preco-card { padding: 28px 24px 36px; }
+  .autor-card { padding: 28px 24px; gap: 20px; }
+  .garantia-inner { gap: 24px; }
+  .counter-block { flex-direction: column; gap: 4px; }
+  .counter-label { max-width: none; }
+  .pacote-total { flex-direction: column; gap: 8px; align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+  .learn-card { transition: none; }
+}
+
+/* ══════════════════════════════════════════
+   STICKY CTA (mobile)
+══════════════════════════════════════════ */
+.sticky-cta {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--black);
+  border-top: 1px solid rgba(245,197,24,.2);
+  padding: 14px 20px;
+  z-index: 100;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sticky-cta-price { color: var(--white); }
+.sticky-cta-price .s-de { font-size: .75rem; color: rgba(255,255,255,.4); text-decoration: line-through; font-family: 'JetBrains Mono', monospace; }
+.sticky-cta-price .s-por { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--amber); }
+.sticky-cta .btn { padding: 12px 24px; font-size: .9rem; flex-shrink: 0; }
+
+@media (max-width: 600px) {
+  .sticky-cta { display: flex; }
+  body { padding-bottom: 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="container">
+    <p class="hero-eyebrow">Para analistas e profissionais de dados</p>
+
+    <h1 class="hero-title">
+      Do Zero<br>ao <span>Dashboard</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      O guia completo para criar relatórios gerenciais no Excel e transformá-los em painéis interativos no Power BI — que qualquer gestor aprova em reunião.
+    </p>
+
+    <!-- Contador animado -->
+    <div class="counter-block" role="img" aria-label="Mais de 300 horas economizadas por profissionais">
+      <span class="counter-number mono" id="counter" aria-hidden="true">0</span>
+      <div class="counter-label">
+        <strong>horas economizadas</strong>
+        por analistas que aplicaram esse método
+      </div>
+    </div>
+
+    <div class="hero-cta-row">
+      <a href="SEU_LINK_KIWIFY_AQUI" class="btn btn--primary btn--lg" id="hero-cta">
+        Quero o pacote completo — R$97
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <p class="hero-guarantee">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Garantia incondicional de 7 dias · Acesso imediato após o pagamento
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DOR ══ -->
+<section id="dor">
+  <div class="container">
+    <h2 class="dor-title">Você se identifica com alguma dessas situações?</h2>
+    <ul class="dor-list" role="list">
+      <li class="dor-item">
+        <div class="dor-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53E3E" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+        <p class="dor-text"><strong>Você passa horas montando relatórios no Excel</strong> — e quando apresenta para o gestor, a primeira pergunta é sobre um número que não está ali.</p>
+      </li>
+      <li class="dor-item">
+        <div class="dor-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53E3E" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+        <p class="dor-text"><strong>Seu dashboard parece amador</strong> comparado ao que você vê em empresas maiores — mas você não sabe por onde começar a melhorar.</p>
+      </li>
+      <li class="dor-item">
+        <div class="dor-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53E3E" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+        <p class="dor-text"><strong>Você ouviu falar de Power BI</strong> mas achou complicado demais — e continua preso no Excel básico enquanto colegas avançam.</p>
+      </li>
+    </ul>
+    <div class="dor-bridge">
+      <p>Esses problemas têm uma causa raiz: <strong>ninguém te ensinou o método certo</strong>. Não falta esforço — falta estrutura. É exatamente isso que este pacote resolve, do zero, passo a passo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ APRENDA ══ -->
+<section id="aprenda">
+  <div class="container">
+    <span class="eyebrow eyebrow--amber">O que você vai dominar</span>
+    <h2 class="section-title">Do dado bruto ao painel interativo</h2>
+    <p class="section-sub">8 capítulos de Excel + 8 capítulos de Power BI, escritos para quem já trabalha na área e quer subir de nível rápido.</p>
+    <div class="learn-grid">
+      <div class="learn-card">
+        <span class="learn-num mono">01</span>
+        <div class="learn-text">
+          <h4>Estrutura de dados profissional</h4>
+          <p>A regra das 3 abas que elimina 90% dos erros em relatórios.</p>
+        </div>
+      </div>
+      <div class="learn-card">
+        <span class="learn-num mono">02</span>
+        <div class="learn-text">
+          <h4>Fórmulas que realmente importam</h4>
+          <p>PROCX, SOMASES, SEERRO e as 12 fórmulas que constroem 80% de qualquer dashboard.</p>
+        </div>
+      </div>
+      <div class="learn-card">
+        <span class="learn-num mono">03</span>
+        <div class="learn-text">
+          <h4>Tabela Dinâmica do jeito certo</h4>
+          <p>50.000 linhas analisadas em 3 minutos. Segmentações, % do total e variação mês a mês.</p>
+        </div>
+      </div>
+      <div class="learn-card">
+        <span class="learn-num mono">04</span>
+        <div class="learn-text">
+          <h4>Visualizações que convencem</h4>
+          <p>Qual gráfico usar para cada pergunta. As regras de design que separam analistas de especialistas.</p>
+        </div>
+      </div>
+      <div class="learn-card">
+        <span class="learn-num mono">05</span>
+        <div class="learn-text">
+          <h4>IA e macros para automatizar</h4>
+          <p>ChatGPT e Copilot para escrever fórmulas e macros VBA. Economize horas toda semana.</p>
+        </div>
+      </div>
+      <div class="learn-card">
+        <span class="learn-num mono">06</span>
+        <div class="learn-text">
+          <h4>Power BI do zero ao publicado</h4>
+          <p>32 passos para conectar o Excel, criar medidas DAX e publicar na nuvem com atualização automática.</p>
+        </div>
+      </div>
+      <div class="learn-card">
+        <span class="learn-num mono">07</span>
+        <div class="learn-text">
+          <h4>Filtros interativos e segmentações</h4>
+          <p>O gestor filtra qualquer dado com um clique. Você nunca mais precisará estar na sala para responder perguntas.</p>
+        </div>
+      </div>
+      <div class="learn-card">
+        <span class="learn-num mono">08</span>
+        <div class="learn-text">
+          <h4>Apresentação com confiança</h4>
+          <p>A estrutura de 3 perguntas que gestores fazem — e como responder antes mesmo de serem feitas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PACOTE ══ -->
+<section id="pacote">
+  <div class="container">
+    <span class="eyebrow eyebrow--amber">O que está incluso</span>
+    <h2 class="section-title">5 materiais. Um pacote completo.</h2>
+    <p class="section-sub">Cada bônus foi criado para complementar o e-book principal — não para encher a caixa.</p>
+
+    <div class="pacote-grid">
+      <div class="pacote-item pacote-item--main">
+        <div class="pacote-left">
+          <div class="pacote-icon pacote-icon--main" aria-hidden="true">📗</div>
+          <div class="pacote-info">
+            <h4>E-book principal — Do Zero ao Dashboard</h4>
+            <p>8 capítulos completos de Excel para gestores. 356 páginas de conteúdo prático.</p>
+          </div>
+        </div>
+        <span class="pacote-badge pacote-badge--main">Principal</span>
+      </div>
+
+      <div class="pacote-item">
+        <div class="pacote-left">
+          <div class="pacote-icon pacote-icon--bonus" aria-hidden="true">📊</div>
+          <div class="pacote-info">
+            <h4>Bônus 1 — Templates de Dashboard (.xlsx)</h4>
+            <p>3 modelos prontos: comercial, financeiro e operacional. Cole seus dados e pronto.</p>
+          </div>
+        </div>
+        <span class="pacote-badge pacote-badge--valor">Valor R$47</span>
+      </div>
+
+      <div class="pacote-item">
+        <div class="pacote-left">
+          <div class="pacote-icon pacote-icon--bonus" aria-hidden="true">✅</div>
+          <div class="pacote-info">
+            <h4>Bônus 2 — Checklist de Revisão</h4>
+            <p>17 pontos de verificação antes de apresentar qualquer relatório para a liderança.</p>
+          </div>
+        </div>
+        <span class="pacote-badge pacote-badge--bonus">Grátis</span>
+      </div>
+
+      <div class="pacote-item">
+        <div class="pacote-left">
+          <div class="pacote-icon pacote-icon--bonus" aria-hidden="true">⚠️</div>
+          <div class="pacote-info">
+            <h4>Bônus 3 — Os 10 Erros Fatais no Excel</h4>
+            <p>Os erros que destroem a credibilidade de analistas em reunião — e como evitá-los.</p>
+          </div>
+        </div>
+        <span class="pacote-badge pacote-badge--bonus">Grátis</span>
+      </div>
+
+      <div class="pacote-item">
+        <div class="pacote-left">
+          <div class="pacote-icon pacote-icon--bonus" aria-hidden="true">⚡</div>
+          <div class="pacote-info">
+            <h4>Bônus 4 — Do Excel ao Power BI</h4>
+            <p>32 passos para transformar o template em painel interativo no Power BI Desktop.</p>
+          </div>
+        </div>
+        <span class="pacote-badge pacote-badge--valor">Valor R$37</span>
+      </div>
+    </div>
+
+    <div class="pacote-total">
+      <div class="pacote-total-label">
+        Valor total dos materiais<br>
+        <strong>R$181 em conteúdo</strong>
+      </div>
+      <div class="pacote-total-price">
+        <div class="de mono">R$181</div>
+        <div class="por">R$97</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ AUTOR ══ -->
+<section id="autor">
+  <div class="container">
+    <span class="eyebrow eyebrow--amber">Quem criou este pacote</span>
+    <div class="autor-card">
+      <div class="autor-avatar" aria-hidden="true">GM</div>
+      <div class="autor-body">
+        <h3 class="autor-name">Gean C. G. de Moraes</h3>
+        <p class="autor-role mono">Especialista em Excel · Análise de Dados · Power BI</p>
+        <p class="autor-bio">
+          Profissional com experiência prática em análise de dados e criação de dashboards gerenciais. Ao longo da carreira, desenvolveu e apresentou relatórios para gestores e diretores, aprendendo na prática o que funciona — e o que destrói a credibilidade de um analista em reunião.
+        </p>
+        <p class="autor-bio" style="margin-top:12px;">
+          Este pacote reúne tudo o que Gean gostaria de ter aprendido no início da carreira: um método direto, sem rodeios, que transforma dados brutos em relatórios que impressionam qualquer liderança.
+        </p>
+        <div class="autor-stats">
+          <div>
+            <div class="autor-stat-val">8+</div>
+            <div class="autor-stat-label">capítulos de<br>conteúdo prático</div>
+          </div>
+          <div>
+            <div class="autor-stat-val">32</div>
+            <div class="autor-stat-label">passos do Excel<br>ao Power BI</div>
+          </div>
+          <div>
+            <div class="autor-stat-val">5</div>
+            <div class="autor-stat-label">materiais no<br>pacote completo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GARANTIA ══ -->
+<section id="garantia">
+  <div class="container">
+    <div class="garantia-inner">
+      <div class="garantia-badge" role="img" aria-label="Garantia de 7 dias">
+        <span class="garantia-days">7</span>
+        <span class="garantia-dias-label">dias</span>
+      </div>
+      <div class="garantia-text">
+        <h3>Risco zero. Garantia incondicional.</h3>
+        <p>Se em até 7 dias após a compra você sentir que o pacote não valeu cada centavo dos R$97, basta enviar um e-mail e devolvemos 100% do valor — sem perguntas, sem burocracia. O risco é inteiramente nosso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PREÇO ══ -->
+<section id="preco">
+  <div class="container">
+    <div class="preco-card">
+      <span class="preco-label">Oferta de lançamento</span>
+      <p class="preco-de mono">De R$181</p>
+      <div class="preco-por"><span>R$</span>97</div>
+      <p class="preco-parcelas">pagamento único · acesso imediato</p>
+
+      <ul class="preco-includes" role="list">
+        <li>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          E-book principal — Do Zero ao Dashboard (8 capítulos)
+        </li>
+        <li>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          Bônus 1 — Templates de Dashboard prontos (.xlsx)
+        </li>
+        <li>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          Bônus 2 — Checklist de revisão (17 pontos)
+        </li>
+        <li>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          Bônus 3 — Os 10 Erros Fatais no Excel
+        </li>
+        <li>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          Bônus 4 — Do Excel ao Power BI (32 passos)
+        </li>
+        <li>
+          <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          Garantia incondicional de 7 dias
+        </li>
+      </ul>
+
+      <a href="SEU_LINK_KIWIFY_AQUI" class="btn btn--primary btn--lg">
+        Quero o pacote agora — R$97
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <p class="preco-note">Pagamento seguro via Kiwify · Cartão, Pix ou boleto</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section id="faq">
+  <div class="container">
+    <span class="eyebrow eyebrow--amber">Perguntas frequentes</span>
+    <h2 class="section-title" style="margin-bottom:40px;">Ficou alguma dúvida?</h2>
+
+    <div class="faq-list" role="list">
+
+      <div class="faq-item">
+        <input type="checkbox" id="faq1">
+        <label class="faq-label" for="faq1">
+          Para quem é este pacote?
+          <span class="faq-arrow" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </label>
+        <div class="faq-body">Para qualquer profissional que usa Excel no trabalho e quer criar relatórios gerenciais melhores. Não precisa de experiência avançada — o conteúdo começa do zero e avança progressivamente. Se você já sabe criar fórmulas básicas, está pronto.</div>
+      </div>
+
+      <div class="faq-item">
+        <input type="checkbox" id="faq2">
+        <label class="faq-label" for="faq2">
+          Preciso ter o Power BI instalado para comprar?
+          <span class="faq-arrow" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </label>
+        <div class="faq-body">Não. O e-book principal foca em Excel — você já tem acesso hoje. O Bônus 4 (Power BI) é um guia separado para quando você quiser dar esse próximo passo. O Power BI Desktop é gratuito e o guia cobre a instalação do zero.</div>
+      </div>
+
+      <div class="faq-item">
+        <input type="checkbox" id="faq3">
+        <label class="faq-label" for="faq3">
+          Como recebo os materiais após a compra?
+          <span class="faq-arrow" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </label>
+        <div class="faq-body">Imediatamente após o pagamento confirmado, a Kiwify envia um e-mail com o link de acesso. Todos os 5 arquivos ficam disponíveis para download na área de membros — sem prazo de expiração.</div>
+      </div>
+
+      <div class="faq-item">
+        <input type="checkbox" id="faq4">
+        <label class="faq-label" for="faq4">
+          A garantia de 7 dias funciona de que forma?
+          <span class="faq-arrow" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </label>
+        <div class="faq-body">Simples: se em até 7 dias após a compra você não estiver satisfeito por qualquer motivo, basta enviar um e-mail pedindo o reembolso. Devolvemos 100% do valor sem perguntas. A política de garantia é gerenciada pela própria Kiwify.</div>
+      </div>
+
+      <div class="faq-item">
+        <input type="checkbox" id="faq5">
+        <label class="faq-label" for="faq5">
+          Esse conteúdo vai ficar desatualizado?
+          <span class="faq-arrow" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </label>
+        <div class="faq-body">O método de estruturação de dados e construção de dashboards é sólido e não muda com atualizações de software. As fórmulas e conceitos de Power BI cobertos são estáveis há anos. Ferramentas novas surgem, mas os fundamentos que este pacote ensina são permanentes.</div>
+      </div>
+
+      <div class="faq-item">
+        <input type="checkbox" id="faq6">
+        <label class="faq-label" for="faq6">
+          Posso usar os templates para uso comercial?
+          <span class="faq-arrow" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </label>
+        <div class="faq-body">Sim. Os templates do Bônus 1 podem ser usados livremente no seu trabalho, adaptados para o seu negócio ou para clientes. A única restrição é não revendê-los como produto digital próprio.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA FINAL ══ -->
+<section id="cta-final">
+  <div class="container" style="text-align:center;">
+    <h2 class="cta-final-title">
+      Seu próximo relatório<br>vai ser <span>diferente.</span>
+    </h2>
+    <p class="cta-final-sub">Pare de perder horas em relatórios que ninguém lembra. Comece a criar dashboards que os gestores guardam.</p>
+    <a href="SEU_LINK_KIWIFY_AQUI" class="btn btn--primary btn--lg">
+      Quero o pacote completo — R$97
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <p style="margin-top:16px;font-size:.82rem;color:rgba(255,255,255,.3);">Garantia de 7 dias · Pagamento seguro via Kiwify</p>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <p>© 2026 Gean C. G. de Moraes · Todos os direitos reservados</p>
+    <p style="margin-top:6px;">
+      <a href="#">Política de Privacidade</a> &nbsp;·&nbsp;
+      <a href="#">Termos de Uso</a> &nbsp;·&nbsp;
+      <a href="mailto:SEU_EMAIL_AQUI">Contato</a>
+    </p>
+    <p style="margin-top:12px;font-size:.75rem;color:rgba(255,255,255,.18);">
+      Este produto é distribuído digitalmente pela plataforma Kiwify. Ao comprar, você concorda com os termos de uso da plataforma.
+    </p>
+  </div>
+</footer>
+
+<!-- ══ STICKY CTA (mobile) ══ -->
+<div class="sticky-cta" aria-label="Comprar agora" role="complementary">
+  <div class="sticky-cta-price">
+    <div class="s-de">R$181</div>
+    <div class="s-por">R$97</div>
+  </div>
+  <a href="SEU_LINK_KIWIFY_AQUI" class="btn btn--primary">Comprar agora</a>
+</div>
+
+<script>
+// ── Contador animado ──────────────────────────────────────────────
+(function() {
+  const el = document.getElementById('counter');
+  if (!el) return;
+  const target = 312;
+  const duration = 1800;
+  const start = performance.now();
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function tick(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    el.textContent = Math.round(easeOut(progress) * target);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+
+  // Start when hero is visible
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      requestAnimationFrame(tick);
+      observer.disconnect();
+    }
+  }, { threshold: 0.3 });
+
+  observer.observe(document.getElementById('hero'));
+
+  // Reduced motion: skip animation
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = target;
+  }
+})();
+
+// ── Smooth scroll para links internos ────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+
+</body>
+</html>
